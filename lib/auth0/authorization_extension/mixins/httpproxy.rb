@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 module Auth0
   module AuthorizationExtension
     module Mixins
@@ -6,7 +8,7 @@ module Auth0
 
         %i[get post put patch delete delete_with_body].each do |method|
           define_method(method) do |path, body = {}, extra_headers = {}|
-            safe_path = URI.escape(path)
+            safe_path = Addressable::URI.escape(path)
             body = body.is_a?(Hash) && body.delete_if { |_, v| v.nil? } || body
             result = if method == :get
                        add_headers(params: body)
