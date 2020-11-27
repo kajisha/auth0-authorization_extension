@@ -1,3 +1,4 @@
+require 'auth0/exception'
 require 'auth0/authorization_extension/version'
 require 'auth0/authorization_extension/mixins'
 require 'auth0/authorization_extension/client'

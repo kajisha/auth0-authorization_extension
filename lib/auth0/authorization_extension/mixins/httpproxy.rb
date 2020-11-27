@@ -23,6 +23,13 @@ module Auth0
                      end
             case result.code
             when 200...226 then safe_parse_json(result.body)
+            when 400       then raise Auth0::BadRequest.new(result.body, code: result.code, headers: result.headers)
+            when 401       then raise Auth0::Unauthorized.new(result.body, code: result.code, headers: result.headers)
+            when 403       then raise Auth0::AccessDenied.new(result.body, code: result.code, headers: result.headers)
+            when 404       then raise Auth0::NotFound.new(result.body, code: result.code, headers: result.headers)
+            when 429       then raise Auth0::RateLimitEncountered.new(result.body, code: result.code, headers: result.headers)
+            when 500       then raise Auth0::ServerError.new(result.body, code: result.code, headers: result.headers)
+            else                raise Auth0::Unsupported.new(result.body, code: result.code, headers: result.headers)
             end
           end
         end
@@ -52,8 +59,13 @@ module Auth0
             headers: headers,
             payload: body
           )
-        rescue => e
-          safe_parse_json(e.response.body)
+        rescue RestClient::Exception => e
+          case e
+          when RestClient::RequestTimeout
+            raise Auth0::RequestTimeout.new(e.message)
+          else
+            return e.response
+          end
         end
       end
     end
