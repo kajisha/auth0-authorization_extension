@@ -17,7 +17,7 @@ module Auth0
         #
         # @return [json] Return the user based on its unique identifier.
         def user(user_id)
-          raise NotImplementedError
+          get "#{users_path}/#{user_id}"
         end
 
         # @see https://auth0.com/docs/api/authorization-extension#get-user-groups
